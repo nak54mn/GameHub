@@ -63,8 +63,36 @@
                 <div class="btn" style="background: rgba(255,255,255,0.1); color: #666; filter: none; box-shadow: none;">Stay Tuned</div>
             </div>
         </div>
+        
+        <!-- Live Status Panel -->
+        <div style="margin-top: 3rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h2 style="font-size: 1.2rem; margin-top: 0; color: #ffb347; display: flex; align-items: center; gap: 10px;">
+                <span style="display:inline-block; width:10px; height:10px; background:#38ef7d; border-radius:50%; box-shadow: 0 0 10px #38ef7d; animation: pulse 2s infinite;"></span>
+                Live Global Match Updates
+            </h2>
+            <div id="status-log" style="height: 120px; overflow-y: hidden; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem; color: #ccc;">
+               <!-- logs injected here -->
+            </div>
+            <style>
+                @keyframes pulse {
+                    0% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.5); opacity: 0.5; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+                @keyframes slideIn {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .log-entry {
+                    animation: slideIn 0.3s ease-out forwards;
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                    padding-bottom: 0.3rem;
+                }
+            </style>
+        </div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         // Dynamically compute the host IP so it works from anywhere on the local network!
         const host = window.location.hostname;
@@ -76,6 +104,33 @@
             e.preventDefault();
             window.location.href = `/checkers/`;
         });
+
+        // Initialize Live Feed
+        try {
+            const hubSocket = io('/hub');
+            const statusLog = document.getElementById('status-log');
+            
+            function renderLog(data) {
+                const el = document.createElement('div');
+                el.className = 'log-entry';
+                el.innerHTML = `<span style="color:#11998e; font-weight:bold; margin-right:8px;">[${data.time}]</span> <span style="color:#fff">${data.text}</span>`;
+                statusLog.prepend(el);
+            }
+            
+            hubSocket.on('liveHistory', (logs) => {
+                statusLog.innerHTML = '';
+                [...logs].reverse().forEach(log => renderLog(log));
+            });
+            
+            hubSocket.on('liveUpdate', (log) => {
+                renderLog(log);
+                if(statusLog.children.length > 5) {
+                    statusLog.lastChild.remove();
+                }
+            });
+        } catch (e) {
+            console.warn('Live connect failed', e);
+        }
     </script>
 </body>
 </html>

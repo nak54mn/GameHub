@@ -10,9 +10,49 @@ const io = new Server(server);
 
 const PORT = 8080;
 
+// 0. Hub Live Panel
+const hubIo = io.of('/hub');
+let recentLogs = [];
+function broadcastHubUpdate(msg) {
+    const log = { time: new Date().toLocaleTimeString(), text: msg };
+    recentLogs.unshift(log);
+    if (recentLogs.length > 10) recentLogs.pop();
+    hubIo.emit('liveUpdate', log);
+}
+hubIo.on('connection', (socket) => {
+    socket.emit('liveHistory', recentLogs);
+});
+
 // 1. Load Game Backends
-require('./othello-backend')(io);
-require('./checkers-backend')(io);
+require('./othello-backend')(io, broadcastHubUpdate);
+require('./checkers-backend')(io, broadcastHubUpdate);
+
+// 1.5 Global Leaderboard for Merge Game
+let mergeLeaderboard = [];
+app.use(express.json());
+
+app.get('/api/leaderboard', (req, res) => {
+    res.json(mergeLeaderboard);
+});
+
+app.post('/api/leaderboard', (req, res) => {
+    const { name, score } = req.body;
+    if (!name || typeof score !== 'number') return res.status(400).send('Invalid data');
+    
+    // Auto replace previous score if same name
+    const existing = mergeLeaderboard.findIndex(e => e.name === name);
+    if (existing !== -1) {
+        if (score > mergeLeaderboard[existing].score) {
+            mergeLeaderboard[existing].score = score;
+        }
+    } else {
+        mergeLeaderboard.push({ name: name.substring(0, 15), score });
+    }
+    
+    mergeLeaderboard.sort((a, b) => b.score - a.score);
+    mergeLeaderboard = mergeLeaderboard.slice(0, 10);
+    res.json(mergeLeaderboard);
+});
 
 // 2. Serve Static Assets
 app.use(express.static(path.join(__dirname, 'public')));

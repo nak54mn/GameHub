@@ -1,4 +1,4 @@
-module.exports = function(ioInstance) {
+module.exports = function(ioInstance, broadcastHubUpdate) {
     const io = ioInstance.of('/checkers');
     const rooms = {};
     const PLAYER_COLORS = ['red', 'yellow', 'blue'];
@@ -60,6 +60,7 @@ module.exports = function(ioInstance) {
                 if (room.players.length >= 2) {
                     room.started = true;
                     io.to(roomCode).emit('gameStart', room.players);
+                    broadcastHubUpdate(`[Checkers] Match started in Room ${roomCode} with ${room.players.length} players!`);
                 } else {
                     socket.emit('errorMsg', 'Need at least 2 players to start.');
                 }

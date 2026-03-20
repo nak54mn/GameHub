@@ -1,6 +1,6 @@
 const OthelloGame = require('./gameLogic');
 
-module.exports = function(ioInstance) {
+module.exports = function(ioInstance, broadcastHubUpdate) {
   const io = ioInstance.of('/othello');
   
   const games = {};
@@ -69,6 +69,7 @@ module.exports = function(ioInstance) {
         players: rooms[roomCode].playersInfo,
         gameState: games[roomCode].getState()
       });
+      if (broadcastHubUpdate) broadcastHubUpdate(`[Othello] Match started in Room ${roomCode}!`);
     });
 
     socket.on('makeMove', ({ roomCode, row, col }) => {
@@ -88,6 +89,14 @@ module.exports = function(ioInstance) {
           flips: result.flips,
           gameState: game.getState()
         });
+
+        if (game.getState().gameOver) {
+            const score = game.getState().score;
+            let winner = 'Nobody';
+            if (score.black > score.white) winner = 'Black';
+            if (score.white > score.black) winner = 'White';
+            broadcastHubUpdate(`[Othello] Match in Room ${roomCode} ended! ${winner} wins.`);
+        }
 
         function triggerAITurn() {
             if (!rooms[roomCode] || !games[roomCode]) return;
