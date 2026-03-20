@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黑白棋 - Othello Multiplayer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <button onclick="window.location.href=`http://${window.location.hostname}:8080`" style="position: fixed; top: 15px; left: 15px; z-index: 9999; padding: 10px 20px; font-weight: bold; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(0,0,0,0.6)'">🏠 Arcade Hub</button>
+    <div id="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Lobby Section -->
+    <div id="lobby" class="container glass-panel active">
+        <h1>黑白棋 Othello</h1>
+        <p class="subtitle">即時連線對戰</p>
+        
+        <div class="input-group">
+            <input type="text" id="playerName" placeholder="請輸入您的暱稱" autocomplete="off" />
+        </div>
+        
+        <div class="action-buttons" style="flex-wrap: wrap;">
+            <button id="btnCreateRoom" class="primary-btn">創建聯機房間</button>
+            <button id="btnPlayAi" class="primary-btn" style="background: linear-gradient(45deg, #11998e, #38ef7d);">單機對戰電腦</button>
+            <div class="divider" style="width: 100%;"><span>或</span></div>
+            <div class="join-group" style="width: 100%;">
+                <input type="text" id="roomCodeInput" placeholder="輸入4碼房間號" maxlength="4" autocomplete="off" />
+                <button id="btnJoinRoom" class="secondary-btn">加入房間</button>
+            </div>
+        </div>
+        <div id="lobbyMessage" class="message error"></div>
+    </div>
+
+    <!-- Waiting Room Section -->
+    <div id="waitingRoom" class="container glass-panel">
+        <h2>等待對手加入...</h2>
+        <div class="room-code-display">
+            房間代碼: <span id="displayRoomCode" class="highlight"></span>
+        </div>
+        <div class="spinner"></div>
+        <p>請將上方代碼分享給您的同事</p>
+    </div>
+
+    <!-- Game Section -->
+    <div id="gameContainer" class="game-wrapper glass-panel">
+        <div class="game-header">
+            <div class="player-info" id="player1Info">
+                <div class="disc black-disc"></div>
+                <div class="name" id="p1Name">等待中...</div>
+                <div class="score" id="blackScore">2</div>
+            </div>
+            
+            <div class="turn-indicator" id="turnIndicator">
+                您的回合
+            </div>
+
+            <div class="player-info" id="player2Info">
+                <div class="score" id="whiteScore">2</div>
+                <div class="name" id="p2Name">等待中...</div>
+                <div class="disc white-disc"></div>
+            </div>
+        </div>
+
+        <div class="board-container">
+            <div id="board" class="othello-board">
+                <!-- JS will inject 64 cells here -->
+            </div>
+        </div>
+
+        <div id="gameMessage" class="game-message"></div>
+        
+        <!-- Game Over Modal -->
+        <div id="gameOverModal" class="modal">
+            <div class="modal-content glass-panel">
+                <h2 id="winnerText">黑子獲勝！</h2>
+                <div class="final-score">
+                    <span id="finalBlack">Black: 32</span> - <span id="finalWhite">White: 32</span>
+                </div>
+                <button id="btnPlayAgain" class="primary-btn">回到大廳</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>

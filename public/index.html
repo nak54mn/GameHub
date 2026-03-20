@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 2rem; background: #0b0c10; color: #fff; font-family: 'Outfit', sans-serif; min-height: 100vh; }
+        h1 { text-align: center; font-size: 3.5rem; background: linear-gradient(90deg, #ff007f, #7928ca, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 3rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 2.5rem; text-align: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; text-decoration: none; color: white; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; background-clip: padding-box; }
+        .card::before { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%); opacity: 0; transition: opacity 0.3s; }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.5); background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); }
+        .card:hover::before { opacity: 1; }
+        .emoji { font-size: 4.5rem; margin-bottom: 1rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4)); }
+        .card h2 { margin: 0 0 1rem 0; font-size: 2rem; font-weight: 700; color: #f8f9fa; }
+        .card p { color: #adb5bd; line-height: 1.6; margin: 0 0 2rem 0; font-size: 1.1rem; }
+        .btn { display: inline-block; padding: 0.8rem 2.5rem; border-radius: 50px; background: linear-gradient(45deg, #7928ca, #ff007f); font-weight: bold; font-size: 1.1rem; filter: drop-shadow(0 4px 10px rgba(121, 40, 202, 0.4)); transition: filter 0.2s; }
+        .card:hover .btn { filter: drop-shadow(0 8px 15px rgba(121, 40, 202, 0.6)); }
+    </style>
+</head>
+<body>
+    <h1>🌟 The Game Arcade 🌟</h1>
+    <div class="grid">
+        <a href="/merge" class="card" style="box-shadow: inset 0 0 50px rgba(255,0,127,0.05);">
+            <div>
+                <div class="emoji">🍳</div>
+                <h2>Merge Cooking</h2>
+                <p>Combine fresh ingredients to fulfill intense restaurant orders in this single-player infinite merge game.</p>
+            </div>
+            <div>
+                <div class="btn">Play Solo</div>
+            </div>
+        </a>
+        <a href="#" id="othello-link" class="card" style="box-shadow: inset 0 0 50px rgba(0,212,255,0.05);">
+            <div>
+                <div class="emoji">⚫⚪</div>
+                <h2>Online Othello</h2>
+                <p>Challenge your colleagues to a real-time multiplayer match of Othello. Who will conquer the board?</p>
+            </div>
+            <div>
+                <div class="btn" style="background: linear-gradient(45deg, #00d4ff, #005bea);">Play Online</div>
+            </div>
+        </a>
+        <a href="#" id="checkers-link" class="card" style="box-shadow: inset 0 0 50px rgba(121,40,202,0.05);">
+            <div>
+                <div class="emoji">⭐</div>
+                <h2>Chinese Checkers</h2>
+                <p>Jump to victory! Gather up to 3 players in this classic multiplier checkers battle.</p>
+            </div>
+            <div>
+                <div class="btn" style="background: linear-gradient(45deg, #ff9a9e, #fecfef); color: #000;">Play Online</div>
+            </div>
+        </a>
+        <div class="card" style="box-shadow: inset 0 0 50px rgba(255,255,255,0.02); opacity: 0.6; cursor: default;">
+            <div>
+                <div class="emoji" style="filter: grayscale(1);">🔒</div>
+                <h2 style="color: #888;">Coming Soon</h2>
+                <p>A new mysterious game is currently under development...</p>
+            </div>
+            <div>
+                <div class="btn" style="background: rgba(255,255,255,0.1); color: #666; filter: none; box-shadow: none;">Stay Tuned</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dynamically compute the host IP so it works from anywhere on the local network!
+        const host = window.location.hostname;
+        document.getElementById('othello-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = `/othello/`;
+        });
+        document.getElementById('checkers-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = `/checkers/`;
+        });
+    </script>
+</body>
+</html>
